@@ -5,7 +5,7 @@ var md5 = require('MD5');
 var dataFormat = require('dataformat');
 var bodyParser = require('body-parser');
 var config = require('../config');
-
+var images = require("images");
 //上传图片
 var upload = function(req,res)
 {
@@ -53,6 +53,32 @@ var upload = function(req,res)
 			saveResult(res,'false');
 	});
 };
+
+var setHeadIcons=function(req,res)//设置小头像
+{
+	var first = req.body.serverid;
+	var second=Math.floor(parseInt(req.body.playerid) / config.field_max);
+	var third = Math.floor(parseInt(req.body.playerid) % config.field_max / config.field_min);
+	console.log("setHeadIcons");
+	var save_folder = config.upload_real + "/" +first.toString()+ "/"+second.toString() + "/" + third.toString();
+	var bigTexture_path = save_folder+"/"+ req.body.serverid.toString()+"_"+req.body.playerid.toString()+"_"+req.body.index+".jpg";
+	var save_path = save_folder+"/"+ req.body.serverid.toString()+"_"+req.body.playerid.toString()+"_headicon.jpg";
+	//var json_path = save_folder+"/"+ req.body.serverid.toString()+"_"+req.body.playerid.toString()+".json";
+	fs.exists(bigTexture_path,function(exists)//大图存在
+	{
+		if(exists)
+		{
+			console.log("exists"+save_path);
+			images(bigTexture_path).size(256,256).save(save_path,{quality : 50});
+			images.gc();
+		}	
+		else
+		{
+			console.log("json not exists!!!!="+json_path);
+			saveResult(res,'false');
+		}
+	});
+}
 
 var setHeadIcon=function(req,res)
 {
@@ -363,7 +389,7 @@ function mkdirsSync(dirname, mode)
 }
 
 exports.upload=upload;
-exports.setHeadIcon=setHeadIcon;
+exports.setHeadIcon=setHeadIcons;
 exports.deletePhoto=deletePhoto;
 exports.downloadPhoto=downloadPhoto;
 exports.downloadJson=downloadJson;
