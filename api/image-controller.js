@@ -80,42 +80,6 @@ var setHeadIcons=function(req,res)//设置小头像
 	});
 }
 
-var setHeadIcon=function(req,res)
-{
-	var first = req.body.serverid;
-	var second=Math.floor(parseInt(req.body.playerid) / config.field_max);
-	var third = Math.floor(parseInt(req.body.playerid) % config.field_max / config.field_min);
-	console.log(req.body.serverid);
-	var save_folder = config.upload_real + "/" +first.toString()+ "/"+second.toString() + "/" + third.toString();
-	var save_path = save_folder+"/"+ req.body.serverid.toString()+"_"+req.body.playerid.toString()+"_"+req.body.index.toString()+".jpg";
-	var json_path = save_folder+"/"+ req.body.serverid.toString()+"_"+req.body.playerid.toString()+".json";
-	fs.exists(json_path,function(exists)
-	{
-		if(exists)
-		{
-			fs.readFile(json_path,'utf8',function(err,data)
-			{
-				if(!err)
-				{
-					var result=JSON.parse(data);
-					result.headicon=req.body.index.toString();
-					var final=JSON.stringify(result);
-					console.log(final);
-					fs.writeFile(json_path,final,function(err)
-					{
-						saveResult(res,'true');
-					})
-				}
-			})
-		}	
-		else
-		{
-			console.log("json not exists!!!!="+json_path);
-			saveResult(res,'false');
-		}
-	});
-}
-
 var deletePhoto=function(req,res)
 {
 	var serverid = req.body.serverid;
@@ -241,8 +205,43 @@ var downloadPhoto = function(req,res)
 	}
 }
 
-
 var downloadHeadPhoto = function(req,res)
+{
+	var serverid = req.body.serverid;
+	var playerid=req.body.playerid;
+	var index;
+	var first = serverid;
+	var second=Math.floor(parseInt(playerid) / config.field_max);
+	var third = Math.floor(parseInt(playerid) % config.field_max / config.field_min);
+	var save_folder = config.upload_real + "/" +first.toString()+ "/"+second.toString() + "/" + third.toString();
+	var json_path = save_folder+"/"+ serverid.toString()+"_"+playerid.toString()+".json";
+
+	index=result.headicon;
+
+	if(serverid && playerid && index)
+	{
+		var save_path = save_folder+"/"+serverid.toString()+"_"+playerid.toString()+"_headicon.jpg";
+		fs.exists(save_path,function(exists)
+		{
+			if(exists)
+			{
+				fs.readFile(save_path,function(err,data)
+				{
+					res.setHeader("Content-Type", "image/jpg");
+					res.writeHead(200, "Ok");
+					res.write(data,"binary"); //格式必须为 binary，否则会出错
+					res.end();
+				});
+			}
+			else
+			{
+				saveResult(res,'false');
+			}
+		});
+	}
+}
+
+/*var downloadHeadPhoto = function(req,res)
 {
 	var serverid = req.body.serverid;
 	var playerid=req.body.playerid;
@@ -307,9 +306,7 @@ var downloadHeadPhoto = function(req,res)
 			console.log("从未上传头像");
 		}
 	});
-
-
-}
+}*/
 
 var downloadJson=function(req,res)
 {
