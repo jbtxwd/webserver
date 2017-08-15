@@ -62,15 +62,44 @@ var setHeadIcons=function(req,res)//设置小头像
 	console.log("setHeadIcons");
 	var save_folder = config.upload_real + "/" +first.toString()+ "/"+second.toString() + "/" + third.toString();
 	var bigTexture_path = save_folder+"/"+ req.body.serverid.toString()+"_"+req.body.playerid.toString()+"_"+req.body.index+".jpg";
-	var save_path = save_folder+"/"+ req.body.serverid.toString()+"_"+req.body.playerid.toString()+"_headicon.jpg";
-	//var json_path = save_folder+"/"+ req.body.serverid.toString()+"_"+req.body.playerid.toString()+".json";
+	var save_path = save_folder+"/"+ req.body.serverid.toString()+"_"+req.body.playerid.toString()+"_"+config.headicon_index+".jpg";
+	var json_path = save_folder+"/"+ req.body.serverid.toString()+"_"+req.body.playerid.toString()+".json";
 	fs.exists(bigTexture_path,function(exists)//大图存在
 	{
 		if(exists)
 		{
 			console.log("exists"+save_path);
-			images(bigTexture_path).size(256,256).save(save_path,{quality : 50});
+			images(bigTexture_path).size(config.headicon_size,config.headicon_size).save(save_path,{quality : 50});
 			images.gc();
+
+			fs.readFile(save_path, function(err, buf) 
+			{
+  				fs.exists(json_path,function(exists)//保存json
+				{
+					if(exists)
+					{
+						fs.readFile(json_path,'utf8',function(err,data)
+						{
+							if(!err)
+							{
+								var result=JSON.parse(data);
+								result.headicon=md5(buf);
+								var final=JSON.stringify(result);
+								console.log(final);
+								fs.writeFile(json_path,final,function(err)
+								{
+									saveResult(res,'true');
+								})
+							}
+						})
+					}	
+					else
+					{
+						console.log("json not exists!!!!="+json_path);
+						saveResult(res,'false');
+					}
+				});
+			});
 		}	
 		else
 		{
@@ -216,7 +245,7 @@ var downloadHeadPhoto = function(req,res)
 	var save_folder = config.upload_real + "/" +first.toString()+ "/"+second.toString() + "/" + third.toString();
 	var json_path = save_folder+"/"+ serverid.toString()+"_"+playerid.toString()+".json";
 
-	index=result.headicon;
+	index=config.headicon_index;
 
 	if(serverid && playerid && index)
 	{
@@ -329,6 +358,7 @@ var downloadJson=function(req,res)
 				{
 					fs.readFile(json_path,'utf8',function(err,data)
 					{
+
 						if(err)
 							console.log("false");
 						else
@@ -341,6 +371,7 @@ var downloadJson=function(req,res)
 				}
 				else //不存在，创建
 				{
+					console.log("创建json,playerid="+playerid);
 					var array=new Array();
 					for(i=0;i<config.photo_max;i++)
 					{
