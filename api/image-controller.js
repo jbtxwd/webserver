@@ -210,8 +210,6 @@ var downloadPhoto = function(req,res)
 		{
 			if(exists)
 			{
-				//var readStream=fs.createReadStream(save_path);
-				//readStream.pipe(res);
 				fs.readFile(save_path,function(err,data)
 				{
 					console.log('download md5 ='+md5(data));
@@ -269,73 +267,6 @@ var downloadHeadPhoto = function(req,res)
 		});
 	}
 }
-
-/*var downloadHeadPhoto = function(req,res)
-{
-	var serverid = req.body.serverid;
-	var playerid=req.body.playerid;
-	var index;
-	var first = serverid;
-	var second=Math.floor(parseInt(playerid) / config.field_max);
-	var third = Math.floor(parseInt(playerid) % config.field_max / config.field_min);
-	var save_folder = config.upload_real + "/" +first.toString()+ "/"+second.toString() + "/" + third.toString();
-	var json_path = save_folder+"/"+ serverid.toString()+"_"+playerid.toString()+".json";
-
-	fs.exists(json_path,function(exists)//先读取json中headicon是哪个
-	{
-		if(exists)
-		{
-			fs.readFile(json_path,'utf8',function(err,data)
-			{
-				if(err)
-				{
-					saveResult(res,'false');
-					console.log("读取玩家json信息失败,serverid="+serverid);
-				}
-				else
-				{
-					//var finalJson=data;
-					var result=JSON.parse(data);
-					if(result.headicon!='0')
-					{
-						index=result.headicon;
-
-						if(serverid && playerid && index)
-						{
-							var save_path = save_folder+"/"+serverid.toString()+"_"+playerid.toString()+"_"+index.toString()+".jpg";
-							console.log(save_path);
-							fs.exists(save_path,function(exists)
-							{
-								if(exists)
-								{
-									fs.readFile(save_path,function(err,data)
-									{
-										res.setHeader("Content-Type", "image/jpg");
-										res.writeHead(200, "Ok");
-										res.write(data,"binary"); //格式必须为 binary，否则会出错
-										res.end();
-									});
-								}
-								else 
-									saveResult(res,'false');
-							});
-						}
-					}
-					else
-					{
-						saveResult(res,'false');
-						console.log("玩家没设置headicon");
-					}
-				}
-			});
-		}
-		else//从未上传头像
-		{
-			saveResult(res,'false');
-			console.log("从未上传头像");
-		}
-	});
-}*/
 
 var downloadJson=function(req,res)
 {
