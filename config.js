@@ -7,7 +7,6 @@ var config = {
   field_min: 1000,
   port: 9000,
   headicon_size:256,
-  headicon_index:10086,
   // 文件上传配置
   upload_temp: './public/temp',
   upload: path.join(__dirname, './public/images'),

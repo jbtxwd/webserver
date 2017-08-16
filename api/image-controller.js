@@ -62,14 +62,14 @@ var setHeadIcons=function(req,res)//设置小头像
 	console.log("setHeadIcons");
 	var save_folder = config.upload_real + "/" +first.toString()+ "/"+second.toString() + "/" + third.toString();
 	var bigTexture_path = save_folder+"/"+ req.body.serverid.toString()+"_"+req.body.playerid.toString()+"_"+req.body.index+".jpg";
-	var save_path = save_folder+"/"+ req.body.serverid.toString()+"_"+req.body.playerid.toString()+"_"+config.headicon_index+".jpg";
+	var save_path = save_folder+"/"+ req.body.serverid.toString()+"_"+req.body.playerid.toString()+"_headicon.jpg";
 	var json_path = save_folder+"/"+ req.body.serverid.toString()+"_"+req.body.playerid.toString()+".json";
 	fs.exists(bigTexture_path,function(exists)//大图存在
 	{
 		if(exists)
 		{
 			console.log("exists"+save_path);
-			images(bigTexture_path).size(config.headicon_size,config.headicon_size).save(save_path,{quality : 50});
+			images(bigTexture_path).size(config.headicon_size,config.headicon_size).save(save_path,{quality : 70});
 			images.gc();
 
 			fs.readFile(save_path, function(err, buf) 
@@ -236,16 +236,16 @@ var downloadHeadPhoto = function(req,res)
 {
 	var serverid = req.body.serverid;
 	var playerid=req.body.playerid;
-	var index;
+	//var index;
 	var first = serverid;
 	var second=Math.floor(parseInt(playerid) / config.field_max);
 	var third = Math.floor(parseInt(playerid) % config.field_max / config.field_min);
 	var save_folder = config.upload_real + "/" +first.toString()+ "/"+second.toString() + "/" + third.toString();
 	var json_path = save_folder+"/"+ serverid.toString()+"_"+playerid.toString()+".json";
 
-	index=config.headicon_index;
+	//index=config.headicon_index;
 
-	if(serverid && playerid && index)
+	if(serverid && playerid)
 	{
 		var save_path = save_folder+"/"+serverid.toString()+"_"+playerid.toString()+"_headicon.jpg";
 		fs.exists(save_path,function(exists)
@@ -257,6 +257,7 @@ var downloadHeadPhoto = function(req,res)
 					res.setHeader("Content-Type", "image/jpg");
 					res.writeHead(200, "Ok");
 					res.write(data,"binary"); //格式必须为 binary，否则会出错
+					console.log("下载头像成功");
 					res.end();
 				});
 			}
