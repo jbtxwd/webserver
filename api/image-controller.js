@@ -318,6 +318,7 @@ var downloadJson=function(req,res)
     				//	else 
     				//		console.log('写文件操作成功');
 					//});
+					console.log("creat json = "+finalJson);
 					saveResult(res,finalJson);
 				}
 			});
@@ -327,6 +328,7 @@ var downloadJson=function(req,res)
 
 function saveResult(res,data)
 {
+	res.writeHead(200);
 	res.write(data);
 	res.end();
 }
