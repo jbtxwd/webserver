@@ -295,9 +295,10 @@ var downloadJson=function(req,res)
 							console.log("false");
 						else
 						{
-							//var jsonData = JSON.parse(data);
-							finalJson=data;
-							saveResult(res,finalJson);
+							var jsonData = JSON.parse(data);
+							jsonData.photomax=config.photo_max;
+							var final=JSON.stringify(jsonData);
+							saveResult(res,final);
 						}
 					});
 				}
@@ -309,7 +310,7 @@ var downloadJson=function(req,res)
 					{
 						array[i]='0';
 					}
-					var jsondata = {data:array,headicon:0};
+					var jsondata = {data:array,headicon:0,photomax:config.photo_max};
 					finalJson = JSON.stringify(jsondata);			
 					//fs.writeFile(json_path, finalJson,function(err)
 					//{
