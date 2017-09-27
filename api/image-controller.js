@@ -84,6 +84,7 @@ var setHeadIcons=function(req,res)//设置小头像
 							{
 								var result=JSON.parse(data);
 								result.headicon=md5(buf);
+								result.headiconindex=req.body.index;
 								var final=JSON.stringify(result);
 								console.log(final);
 								fs.writeFile(json_path,final,function(err)
