@@ -233,6 +233,69 @@ var downloadPhoto = function(req,res)
 	}
 }
 
+var downloadBigHeadPhoto = function(req,res)//下载头像对应的大图
+{
+	var serverid = req.body.serverid;
+	var playerid=req.body.playerid;
+	//var index;
+	var first = serverid;
+	var second=Math.floor(parseInt(playerid) / config.field_max);
+	var third = Math.floor(parseInt(playerid) % config.field_max / config.field_min);
+	var save_folder = config.upload_real + "/" +first.toString()+ "/"+second.toString() + "/" + third.toString();
+	var json_path = save_folder+"/"+ serverid.toString()+"_"+playerid.toString()+".json";
+
+	//index=config.headicon_index;
+	if(mkdirsSync(save_folder,0777)) 
+	{
+		fs.exists(json_path,function(exists)
+		{
+			if(exists)//存在，写入
+			{
+				fs.readFile(json_path,'utf8',function(err,data)
+				{
+					if(err)
+					{
+						console.log("false");
+						saveResult(res,'false');
+					}
+					else
+					{
+						var jsonData = JSON.parse(data);
+						var index = jsonData.headiconindex;
+
+						if(serverid && playerid)
+						{
+							var save_path = save_folder+"/"+serverid.toString()+"_"+playerid.toString()+"_"+index+".jpg";
+							fs.exists(save_path,function(exists)
+							{
+								if(exists)
+								{
+									fs.readFile(save_path,function(err,data)
+									{
+										res.setHeader("Content-Type", "image/jpg");
+										res.writeHead(200, "Ok");
+										res.write(data,"binary"); //格式必须为 binary，否则会出错
+										console.log("下载头像成功");
+										res.end();
+									});
+								}
+								else
+								{
+									saveResult(res,'false');
+								}
+							});
+						}
+					}
+				});
+			}
+			else //不存在，返回false
+			{
+				saveResult(res,'false');
+			}
+		});
+	}
+}
+
 var downloadHeadPhoto = function(req,res)
 {
 	var serverid = req.body.serverid;
@@ -358,3 +421,4 @@ exports.deletePhoto=deletePhoto;
 exports.downloadPhoto=downloadPhoto;
 exports.downloadJson=downloadJson;
 exports.downloadHeadPhoto=downloadHeadPhoto;
+exports.downloadBigHeadPhoto=downloadBigHeadPhoto;

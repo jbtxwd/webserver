@@ -42,5 +42,8 @@ router.post('/photo/downloadjson',function(req,res){
 	console.log('start downloadjson');
 	imageController.downloadJson(req,res);
 });
-
+router.post('/photo/downloadBigHeadPhoto',function(req,res){
+	console.log('start downloadBigHeadPhoto');
+	imageController.downloadBigHeadPhoto(req,res);
+});
 module.exports = router;
