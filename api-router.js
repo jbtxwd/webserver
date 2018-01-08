@@ -47,7 +47,7 @@ router.post('/photo/downloadBigHeadPhoto',function(req,res){
 	imageController.downloadBigHeadPhoto(req,res);
 });
 
-router.post('/photo/uploaddancegrouptexture', function (req, res) {
+router.post('/photo/uploaddancegrouptexture',multipartMiddleware, function (req, res) {
     console.log('start uploaddancegrouptexture');
     imageController.uploaddancegrouptexture(req, res);
 });

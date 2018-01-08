@@ -9,6 +9,7 @@ var images = require("images");
 //上传图片
 var upload = function(req,res)
 {
+	console.log(req.body.textureMD5);
 	fs.readFile(req.files.file.path, function(err, data) 
 	{
 		var textureMD5 = req.body.textureMD5;
@@ -26,15 +27,16 @@ var upload = function(req,res)
 				console.log('save md5=='+textureMD5);
 				var save_folder = config.upload_real + "/" +first.toString()+ "/"+second.toString() + "/" + third.toString();
 				var save_path = save_folder+"/"+serverid.toString()+"_"+playerid.toString()+"_"+index.toString()+".jpg";
-				var json_path = save_folder+"/"+ serverid.toString()+"_"+playerid.toString()+".json";
+                var json_path = save_folder + "/" + serverid.toString() + "_" + playerid.toString() + ".json";
+                console.log("save_path=" + save_path);
 				if(mkdirsSync(save_folder,0777)) 
 				{
 					fs.rename(tmp_path, save_path, function(err) 
 					{
   						if (err) 
   						{
-  							saveResult(res,'false');
-  							console.log("upload photon err");
+                                saveResult(res, 'false');
+                                console.log("upload photon err=" + err);
   						}
   						else 
   						{
@@ -420,10 +422,8 @@ var uploaddancegrouptexture = function(req,res)
 {
 	fs.readFile(req.files.file.path, function(err, data) 
 	{
-		//var textureMD5 = req.body.textureMD5;
 		var serverid = req.body.serverid;
 		var groupid=req.body.groupid;
-		//var index = req.body.index;
 		if(!err)
 		{
 			if(serverid && groupid)
@@ -447,7 +447,6 @@ var uploaddancegrouptexture = function(req,res)
   						}
   						else 
   						{
-  							//saveJson(index,textureMD5,json_path);
      						saveResult(res,'true');
   						}
 					});
@@ -468,16 +467,11 @@ var uploaddancegrouptexture = function(req,res)
 var downloaddancegrouptexture = function(req,res)
 {
 	var serverid = req.body.serverid;
-	var groupid=req.body.playerid;
-	//var index;
+	var groupid=req.body.groupid;
 	var first = serverid;
 	var second=Math.floor(parseInt(groupid) / config.field_max);
     var third = Math.floor(parseInt(groupid) % config.field_max / config.field_min);
     var save_folder = config.upload_groupimagepath + "/" + first.toString() + "/" + second.toString() + "/" + third.toString();
-	//var json_path = save_folder+"/"+ serverid.toString()+"_"+groupid.toString()+".json";
-
-	//index=config.headicon_index;
-
 	if(serverid && groupid)
 	{
 		var save_path = save_folder+"/"+serverid.toString()+"_"+groupid.toString()+".jpg";
@@ -507,20 +501,16 @@ var deleteloaddancegrouptexture = function(req,res)
 {
     var serverid = req.body.serverid;
     var groupid = req.body.groupid;
-    //var index = req.body.index;
     if (serverid && groupid) {
         var first = serverid;
         var second = Math.floor(parseInt(groupid) / config.field_max);
         var third = Math.floor(parseInt(groupid) % config.field_max / config.field_min);
         var save_folder = config.upload_groupimagepath + "/" + first.toString() + "/" + second.toString() + "/" + third.toString();
         var save_path = save_folder + "/" + serverid.toString() + "_" + groupid.toString() +".jpg";
-        //var json_path = save_folder + "/" + serverid.toString() + "_" + groupid.toString() + ".json";
-
         fs.unlink(save_path, function (err) {
             if (err)
                 console.log(err.toString());
         });
-        saveJson(index, '0', json_path);
         saveResult(res, 'true');
     }
 };
