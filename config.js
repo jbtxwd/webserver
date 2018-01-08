@@ -11,6 +11,7 @@ var config = {
   upload_temp: './public/temp',
   upload: path.join(__dirname, './public/images'),
   upload_real: './public/images',
+  upload_groupimagepath: './public/groupimages',
   photo_max:12,//每个玩家最大的存储数量
   keys:{
       '101':'2eaaad0b65be07ece7bb4991b960da22',

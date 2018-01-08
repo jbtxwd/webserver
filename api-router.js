@@ -46,4 +46,19 @@ router.post('/photo/downloadBigHeadPhoto',function(req,res){
 	console.log('start downloadBigHeadPhoto');
 	imageController.downloadBigHeadPhoto(req,res);
 });
+
+router.post('/photo/uploaddancegrouptexture', function (req, res) {
+    console.log('start uploaddancegrouptexture');
+    imageController.uploaddancegrouptexture(req, res);
+});
+
+router.post('/photo/downloaddancegrouptexture', function (req, res) {
+    console.log('start downloaddancegrouptexture');
+    imageController.downloaddancegrouptexture(req, res);
+});
+
+router.post('/photo/deleteloaddancegrouptexture', function (req, res) {
+    console.log('start deleteloaddancegrouptexture');
+    imageController.deleteloaddancegrouptexture(req, res);
+});
 module.exports = router;

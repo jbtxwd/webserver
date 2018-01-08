@@ -415,6 +415,115 @@ function mkdirsSync(dirname, mode)
     }
 }
 
+//上传舞团团徽
+var uploaddancegrouptexture = function(req,res)
+{
+	fs.readFile(req.files.file.path, function(err, data) 
+	{
+		//var textureMD5 = req.body.textureMD5;
+		var serverid = req.body.serverid;
+		var groupid=req.body.groupid;
+		//var index = req.body.index;
+		if(!err)
+		{
+			if(serverid && groupid)
+			{
+				var first = serverid;
+				var second=Math.floor(parseInt(groupid) / config.field_max);
+				var third = Math.floor(parseInt(groupid) % config.field_max / config.field_min);
+				var tmp_path=req.files.file.path;
+                //console.log('save md5=='+textureMD5);
+                var save_folder = config.upload_groupimagepath + "/" + first.toString() + "/" + second.toString() + "/" + third.toString();
+				var save_path = save_folder+"/"+serverid.toString()+"_"+groupid.toString()+".jpg";
+				//var json_path = save_folder+"/"+ serverid.toString()+"_"+groupid.toString()+".json";
+				if(mkdirsSync(save_folder,0777)) 
+				{
+					fs.rename(tmp_path, save_path, function(err) 
+					{
+  						if (err) 
+  						{
+  							saveResult(res,'false');
+  							console.log("upload photon err");
+  						}
+  						else 
+  						{
+  							//saveJson(index,textureMD5,json_path);
+     						saveResult(res,'true');
+  						}
+					});
+				}
+				else 
+					saveResult(res,'false');
+			}
+			else 
+				saveResult(res,'false');
+		}
+		else 
+			saveResult(res,'false');
+	});
+};
+
+
+//下载舞团团徽
+var downloaddancegrouptexture = function(req,res)
+{
+	var serverid = req.body.serverid;
+	var groupid=req.body.playerid;
+	//var index;
+	var first = serverid;
+	var second=Math.floor(parseInt(groupid) / config.field_max);
+    var third = Math.floor(parseInt(groupid) % config.field_max / config.field_min);
+    var save_folder = config.upload_groupimagepath + "/" + first.toString() + "/" + second.toString() + "/" + third.toString();
+	//var json_path = save_folder+"/"+ serverid.toString()+"_"+groupid.toString()+".json";
+
+	//index=config.headicon_index;
+
+	if(serverid && groupid)
+	{
+		var save_path = save_folder+"/"+serverid.toString()+"_"+groupid.toString()+".jpg";
+		fs.exists(save_path,function(exists)
+		{
+			if(exists)
+			{
+				fs.readFile(save_path,function(err,data)
+				{
+					res.setHeader("Content-Type", "image/jpg");
+					res.writeHead(200, "Ok");
+					res.write(data,"binary"); //格式必须为 binary，否则会出错
+					console.log("下载舞团团徽成功");
+					res.end();
+				});
+			}
+			else
+			{
+				saveResult(res,'false');
+			}
+		});
+	}
+};
+
+//删除舞团团徽
+var deleteloaddancegrouptexture = function(req,res)
+{
+    var serverid = req.body.serverid;
+    var groupid = req.body.groupid;
+    //var index = req.body.index;
+    if (serverid && groupid) {
+        var first = serverid;
+        var second = Math.floor(parseInt(groupid) / config.field_max);
+        var third = Math.floor(parseInt(groupid) % config.field_max / config.field_min);
+        var save_folder = config.upload_groupimagepath + "/" + first.toString() + "/" + second.toString() + "/" + third.toString();
+        var save_path = save_folder + "/" + serverid.toString() + "_" + groupid.toString() +".jpg";
+        //var json_path = save_folder + "/" + serverid.toString() + "_" + groupid.toString() + ".json";
+
+        fs.unlink(save_path, function (err) {
+            if (err)
+                console.log(err.toString());
+        });
+        saveJson(index, '0', json_path);
+        saveResult(res, 'true');
+    }
+};
 exports.upload=upload;
 exports.setHeadIcon=setHeadIcons;
 exports.deletePhoto=deletePhoto;
@@ -422,3 +531,6 @@ exports.downloadPhoto=downloadPhoto;
 exports.downloadJson=downloadJson;
 exports.downloadHeadPhoto=downloadHeadPhoto;
 exports.downloadBigHeadPhoto=downloadBigHeadPhoto;
+exports.uploaddancegrouptexture=uploaddancegrouptexture;
+exports.downloaddancegrouptexture=downloaddancegrouptexture;
+exports.deleteloaddancegrouptexture=deleteloaddancegrouptexture;
