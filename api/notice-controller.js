@@ -9,8 +9,8 @@ var images = require("images");
 
 var getnoticecontent = function(req,res)
 {
-    var textureMD5 = req.body.md5;
-    console.log(textureMD5);
+    var reqmd5 = req.body.md5;
+   
     
     var save_path = config.upload_notice + "/notice.txt";
     console.log(save_path);
@@ -26,7 +26,15 @@ var getnoticecontent = function(req,res)
                 }
                 else
                 {
-                    saveResult(res,data);
+                    console.log(reqmd5+"----"+md5(data));
+                    if(reqmd5==md5(data))
+                    {
+                        saveResult(res,"same");
+                    }
+                    else
+                    {
+                        saveResult(res,data);
+                    }
                 }
             });
         }
@@ -39,8 +47,8 @@ var getnoticecontent = function(req,res)
 
 var getnoticeimage = function(req,res)
 {
-    var textureMD5 = req.body.md5;
-    console.log(textureMD5);
+    var reqmd5 = req.body.md5;
+    console.log(reqmd5);
     
     var save_path = config.upload_notice + "/notice.png";
     console.log(save_path);
@@ -54,16 +62,23 @@ var getnoticeimage = function(req,res)
                 {
                     fs.readFile(save_path,function(err,data)
                     {
-                        res.setHeader("Content-Type", "image/png");
-                        res.writeHead(200, "Ok");
-                        res.write(data,"binary"); //格式必须为 binary，否则会出错
-                        console.log("下载舞团团徽成功");
-                        res.end();
+                        if(reqmd5==md5(data))
+                        {
+                            saveResult(res,'same');
+                        }
+                        else
+                        {
+                            res.setHeader("Content-Type", "image/png");
+                            res.writeHead(200, "Ok");
+                            res.write(data,"binary"); //格式必须为 binary，否则会出错
+                            console.log("下载舞团团徽成功");
+                            res.end();
+                        }
                     });
                 }
                 else
                 {
-                    saveResult(res,'false');
+                    saveResult(res,'none');
                 }
             });
         }
