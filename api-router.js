@@ -1,5 +1,6 @@
 var express = require('express');
 var imageController = require('./api/image-controller');
+var noticeController = require('./api/notice-controller');
 var config = require('./config');
 var bodyParser = require('body-parser');
 var app=express();
@@ -60,5 +61,13 @@ router.post('/photo/downloaddancegrouptexture', function (req, res) {
 router.post('/photo/deleteloaddancegrouptexture', function (req, res) {
     console.log('start deleteloaddancegrouptexture');
     imageController.deleteloaddancegrouptexture(req, res);
+});
+
+router.post('/notice/getnoticecontent', function (req, res) {
+    noticeController.getnoticecontent(req, res);
+});
+
+router.post('/notice/getnoticeimage', function (req, res) {
+    noticeController.getnoticeimage(req, res);
 });
 module.exports = router;
